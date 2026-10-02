@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Web Sorter</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>Web Sorter</h1>
+    <button id="open" class="primary">📂 Escolher pasta</button>
+    <span id="count"></span>
+    <div class="actions">
+      <button id="all" disabled>Selecionar tudo</button>
+      <button id="none" disabled>Limpar</button>
+      <button id="move" disabled>Mover…</button>
+      <button id="del" class="danger" disabled>Deletar</button>
+    </div>
+  </header>
+
+  <p id="status">Escolha uma pasta do seu computador. Nada é enviado nem armazenado: tudo acontece no seu navegador.</p>
+  <main id="grid"></main>
+
+  <script src="app.js"></script>
+</body>
+</html>

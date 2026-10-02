@@ -1,0 +1,45 @@
+* { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, sans-serif; background: #15171c; color: #e8e8ea; }
+
+header {
+  position: sticky; top: 0; z-index: 10;
+  display: flex; flex-wrap: wrap; align-items: center; gap: 12px;
+  padding: 12px 16px; background: #1e2128; border-bottom: 1px solid #2c303a;
+}
+h1 { font-size: 18px; margin: 0 8px 0 0; }
+.actions { margin-left: auto; display: flex; gap: 8px; }
+#count { color: #9aa0ab; font-size: 14px; }
+
+button {
+  padding: 8px 14px; border: 1px solid #3a3f4b; border-radius: 6px;
+  background: #272b34; color: inherit; cursor: pointer; font-size: 14px;
+}
+button:hover:not(:disabled) { background: #323744; }
+button:disabled { opacity: .4; cursor: default; }
+button.primary { background: #3b6cf6; border-color: #3b6cf6; }
+button.danger { background: #a83240; border-color: #a83240; }
+
+#status { padding: 8px 16px; margin: 0; color: #9aa0ab; font-size: 14px; }
+
+#grid {
+  display: grid; gap: 8px; padding: 8px 16px 32px;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+}
+
+.card {
+  content-visibility: auto; contain-intrinsic-size: 130px 150px;
+  position: relative; cursor: pointer; user-select: none;
+  background: #1e2128; border: 2px solid transparent; border-radius: 8px; overflow: hidden;
+}
+.card.selected { border-color: #3b6cf6; background: #232a42; }
+.card.selected::after {
+  content: "✓"; position: absolute; top: 6px; right: 6px;
+  width: 22px; height: 22px; border-radius: 50%;
+  background: #3b6cf6; text-align: center; line-height: 22px; font-size: 14px;
+}
+.thumb {
+  height: 100px; display: flex; align-items: center; justify-content: center;
+  background: #111317; color: #6b7280; font-size: 13px; overflow: hidden;
+}
+.thumb canvas, .thumb video { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+.name { padding: 6px 8px; font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
