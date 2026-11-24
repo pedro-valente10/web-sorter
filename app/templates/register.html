@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Cadastro · Web Sorter{% endblock %}
+{% block content %}
+<main class="auth">
+  <h1>Criar conta</h1>
+  <p class="muted">Suas decisões ficam salvas na sua conta.</p>
+  {% if error %}<p class="error" role="alert">{{ error }}</p>{% endif %}
+  <form method="post" action="{{ url_for('auth.register') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <label>Usuário
+      <input name="username" autocomplete="username" required autofocus>
+    </label>
+    <label>Senha (mínimo 8 caracteres)
+      <input name="password" type="password" minlength="8"
+             autocomplete="new-password" required>
+    </label>
+    <button type="submit" class="primary">Criar conta</button>
+  </form>
+  <p class="muted">Já tem conta?
+    <a href="{{ url_for('auth.login_page') }}">Entrar</a></p>
+</main>
+{% endblock %}

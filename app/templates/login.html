@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Entrar · Web Sorter{% endblock %}
+{% block content %}
+<main class="auth">
+  <h1>Web Sorter</h1>
+  <p class="muted">Entre para continuar de onde parou.</p>
+  {% for message in get_flashed_messages() %}
+    <p class="notice">{{ message }}</p>
+  {% endfor %}
+  {% if error %}<p class="error" role="alert">{{ error }}</p>{% endif %}
+  <form method="post" action="{{ url_for('auth.login') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <label>Usuário
+      <input name="username" autocomplete="username" required autofocus>
+    </label>
+    <label>Senha
+      <input name="password" type="password"
+             autocomplete="current-password" required>
+    </label>
+    <button type="submit" class="primary">Entrar</button>
+  </form>
+  <p class="muted">Não tem conta?
+    <a href="{{ url_for('auth.register_page') }}">Cadastre-se</a></p>
+</main>
+{% endblock %}
