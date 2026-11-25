@@ -2,11 +2,14 @@
 from dataclasses import replace
 from datetime import datetime, timedelta, timezone
 
+from domain.batch import Batch, BatchItem, BatchProgress, ItemStatus
 from domain.errors import UsernameAlreadyExistsError
 from domain.file_decision import FileDecision
 from domain.sorting_session import SortingSession
 from domain.user import User
 from use_cases.ports import (
+    BatchItemRepository,
+    BatchRepository,
     DecisionRepository,
     PasswordHasher,
     SessionRepository,
@@ -79,6 +82,53 @@ class InMemoryDecisionRepository(DecisionRepository):
 
     def list_by_session(self, session_id: int) -> list[FileDecision]:
         return [d for (sid, _), d in self.items.items() if sid == session_id]
+
+
+class InMemoryBatchItemRepository(BatchItemRepository):
+    def __init__(self):
+        self.items: dict[tuple[int, int], BatchItem] = {}
+
+    def get(self, batch_id: int, position: int) -> BatchItem | None:
+        return self.items.get((batch_id, position))
+
+    def list_by_batch(self, batch_id: int) -> list[BatchItem]:
+        return [i for (bid, _), i in self.items.items() if bid == batch_id]
+
+    def save_all(self, items: list[BatchItem]) -> None:
+        for item in items:
+            self.items[(item.batch_id, item.position)] = item
+
+    def progress(self, batch_id: int) -> BatchProgress:
+        found = [item.status for item in self.list_by_batch(batch_id)]
+        return BatchProgress(
+            total=len(found),
+            done=found.count(ItemStatus.DONE),
+            failed=found.count(ItemStatus.FAILED),
+        )
+
+
+class InMemoryBatchRepository(BatchRepository):
+    def __init__(self, items: InMemoryBatchItemRepository):
+        self._items = items
+        self.batches: dict[int, Batch] = {}
+
+    def add(self, batch, items):
+        batch.id = len(self.batches) + 1
+        self.batches[batch.id] = replace(batch)
+        stored = [replace(item, batch_id=batch.id) for item in items]
+        self._items.save_all(stored)
+        return batch, stored
+
+    def get(self, batch_id: int) -> Batch | None:
+        found = self.batches.get(batch_id)
+        return None if found is None else replace(found)
+
+    def list_by_user(self, user_id: int) -> list[Batch]:
+        found = [b for b in self.batches.values() if b.user_id == user_id]
+        return list(reversed(found))
+
+    def update(self, batch: Batch) -> None:
+        self.batches[batch.id] = replace(batch)
 
 
 class FakeClock:

@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+{% from "brand.html" import brand %}
+{% block content %}
+<div class="page">
+  <header class="topbar">
+    {{ brand() }}
+    <nav class="tabs" aria-label="Telas">
+      <a href="#organizar" data-tab="organizar">Organizar por extensão</a>
+      <a href="#explorar" data-tab="explorar">Explorar pasta (grade)</a>
+      <a href="#decidir" data-tab="decidir">Decidir arquivo a arquivo</a>
+    </nav>
+    <div class="who">
+      <a href="#historico" data-tab="historico">Histórico</a>
+      <span class="muted">{{ username }}</span>
+      <form method="post" action="{{ url_for('auth.logout') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button type="submit" class="link">Sair</button>
+      </form>
+    </div>
+  </header>
+
+  <main>
+    <section data-panel="organizar" hidden>
+      <div id="resume-banner" class="banner" hidden></div>
+      <p id="organize-status" class="status" role="status" hidden></p>
+      <div id="organize-progress" class="progress" hidden></div>
+      <div id="organize-errors"></div>
+
+      <div class="columns">
+        <section>
+          <h2><span class="step">1</span> Pastas de origem</h2>
+          <div id="source-list"></div>
+          <button id="add-source" type="button" class="drop-zone">
+            <span class="plus" aria-hidden="true">+</span>
+            <strong id="add-source-label">Arraste e solte uma pasta aqui</strong>
+            <span id="add-source-hint" class="muted">ou clique para selecionar</span>
+          </button>
+          <fieldset class="modes">
+            <legend>O que fazer com os arquivos</legend>
+            <label><input type="radio" name="mode" value="copy" checked>
+              Copiar <span class="muted">mantém os originais na origem</span></label>
+            <label><input type="radio" name="mode" value="move">
+              Mover <span class="muted">remove da origem depois de copiar</span></label>
+          </fieldset>
+        </section>
+
+        <section>
+          <h2><span class="step">2</span> Extensões a organizar</h2>
+          <div class="extensions">
+            <header>
+              <strong id="extension-count">Nenhuma extensão</strong>
+              <button id="clear-extensions" type="button" class="link" hidden>
+                Limpar seleção
+              </button>
+            </header>
+            <ul id="extension-list"></ul>
+          </div>
+        </section>
+
+        <section>
+          <h2><span class="step">3</span> Pasta de destino</h2>
+          <div id="destination-slot"></div>
+          <button id="add-destination" type="button" class="drop-zone">
+            <span class="plus" aria-hidden="true">+</span>
+            <strong>Arraste e solte uma pasta aqui</strong>
+            <span class="muted">ou clique para selecionar</span>
+          </button>
+          <button id="change-destination" type="button" class="link" hidden>
+            Trocar pasta
+          </button>
+          <p id="organize-warning" class="error" role="alert" hidden></p>
+          <div id="organize-summary" class="summary" hidden>
+            <strong>Resumo</strong>
+            <p id="organize-summary-text"></p>
+          </div>
+          <button id="run-organize" type="button" class="primary wide" disabled>
+            Copiar arquivos
+          </button>
+          <p id="organize-hint" class="muted">
+            Escolha a origem, o destino e pelo menos uma extensão.
+          </p>
+        </section>
+      </div>
+    </section>
+
+    <section data-panel="explorar" hidden>
+      <div class="toolbar">
+        <button id="explore-pick" type="button">Escolher pasta</button>
+        <span id="explore-count" class="muted" role="status"></span>
+        <div class="row end">
+          <button id="explore-all" type="button">Selecionar tudo</button>
+          <button id="explore-none" type="button">Limpar</button>
+          <button id="explore-move" type="button">Mover...</button>
+          <button id="explore-delete" type="button" class="danger">Deletar</button>
+        </div>
+      </div>
+      <p id="explore-status" class="status" role="status" hidden></p>
+      <div id="explore-progress" class="progress" hidden></div>
+      <nav aria-label="Caminho da pasta">
+        <ol id="explore-trail" class="trail" hidden></ol>
+      </nav>
+      <div id="explore-errors"></div>
+      <div id="explore-grid" class="grid"></div>
+    </section>
+
+    <section data-panel="decidir" hidden>
+      <div class="toolbar">
+        <button id="decide-pick" type="button">Escolher pasta</button>
+        <span id="decide-status" class="muted" role="status">
+          Escolha uma pasta para começar.
+        </span>
+      </div>
+      <section id="recent" class="panel" hidden>
+        <h2>Pastas anteriores</h2>
+        <p class="muted">Escolha a mesma pasta de novo para continuar.</p>
+        <ul id="recent-list"></ul>
+      </section>
+      <section id="decide-panel" class="panel" hidden>
+        <div class="row">
+          <form id="destination-form" class="row">
+            <input id="destination-name" placeholder="Novo destino (subpasta)"
+                   aria-label="Novo destino" maxlength="60" required>
+            <button type="submit">Adicionar destino</button>
+          </form>
+          <label class="row">Mostrar
+            <select id="decide-filter">
+              <option value="pending">Sem decisão</option>
+              <option value="all">Todos</option>
+              <option value="move">Mover</option>
+              <option value="delete">Excluir</option>
+              <option value="keep">Manter</option>
+            </select>
+          </label>
+          <div class="row end">
+            <button id="decide-apply" type="button" class="primary">
+              Aplicar decisões na pasta
+            </button>
+          </div>
+        </div>
+        <p id="decide-summary" class="muted"></p>
+      </section>
+      <div id="decide-grid" class="grid"></div>
+    </section>
+
+    <section data-panel="historico" hidden>
+      <h1>Histórico</h1>
+      <p id="history-status" class="status" role="status" hidden></p>
+      <div id="history-progress" class="progress" hidden></div>
+      <div id="history-errors"></div>
+      <ul id="history-list" class="history"></ul>
+    </section>
+  </main>
+</div>
+{% endblock %}
+{% block scripts %}
+<script type="module" src="{{ url_for('static', filename='js/main.js') }}"></script>
+{% endblock %}

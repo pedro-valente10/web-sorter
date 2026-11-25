@@ -6,7 +6,7 @@ from flask import Flask, jsonify, request
 
 from app.config import Config
 from app.container import build_container
-from app.routes import auth_routes, sorter_routes
+from app.routes import auth_routes, batch_routes, sorter_routes
 from app.security import SAFE_METHODS, csrf_is_valid, get_csrf_token
 from domain.errors import (
     DomainError,
@@ -24,6 +24,9 @@ _STATUS_BY_ERROR = (
     (InvalidCredentialsError, 401),
 )
 
+# Só nomes de arquivos trafegam; 16 MB cabem pastas muito grandes.
+_MAX_BODY_BYTES = 16 * 1024 * 1024
+
 _CSP = (
     "default-src 'self'; img-src 'self' blob: data:; media-src 'self' blob:; "
     "style-src 'self'; script-src 'self'; frame-ancestors 'none'"
@@ -37,7 +40,7 @@ def create_app(config: Config | None = None) -> Flask:
         SECRET_KEY=config.secret_key,
         SESSION_COOKIE_HTTPONLY=True,
         SESSION_COOKIE_SAMESITE="Lax",
-        MAX_CONTENT_LENGTH=1024 * 1024,
+        MAX_CONTENT_LENGTH=_MAX_BODY_BYTES,
     )
 
     database = Database(config.database_path)
@@ -46,6 +49,7 @@ def create_app(config: Config | None = None) -> Flask:
 
     app.register_blueprint(auth_routes.bp)
     app.register_blueprint(sorter_routes.bp)
+    app.register_blueprint(batch_routes.bp)
     app.context_processor(lambda: {"csrf_token": get_csrf_token})
 
     @app.before_request

@@ -36,6 +36,28 @@ CREATE TABLE IF NOT EXISTS file_decisions (
     applied INTEGER NOT NULL DEFAULT 0,
     PRIMARY KEY (session_id, path)
 );
+
+CREATE TABLE IF NOT EXISTS batches (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    kind TEXT NOT NULL,
+    sources TEXT NOT NULL,
+    destination TEXT,
+    status TEXT NOT NULL,
+    created_at TEXT NOT NULL,
+    finished_at TEXT
+);
+
+CREATE TABLE IF NOT EXISTS batch_items (
+    batch_id INTEGER NOT NULL REFERENCES batches(id) ON DELETE CASCADE,
+    position INTEGER NOT NULL,
+    source INTEGER NOT NULL,
+    name TEXT NOT NULL,
+    target_name TEXT,
+    status TEXT NOT NULL,
+    error TEXT,
+    PRIMARY KEY (batch_id, position)
+);
 """
 
 

@@ -7,6 +7,7 @@ from abc import ABC, abstractmethod
 from datetime import datetime, timezone
 from typing import Callable
 
+from domain.batch import Batch, BatchItem, BatchProgress
 from domain.file_decision import FileDecision
 from domain.sorting_session import SortingSession
 from domain.user import User
@@ -67,6 +68,44 @@ class DecisionRepository(ABC):
 
     @abstractmethod
     def list_by_session(self, session_id: int) -> list[FileDecision]:
+        ...
+
+
+class BatchRepository(ABC):
+    @abstractmethod
+    def add(
+        self, batch: Batch, items: list[BatchItem]
+    ) -> tuple[Batch, list[BatchItem]]:
+        """Persiste lote e itens de uma vez (tudo ou nada)."""
+
+    @abstractmethod
+    def get(self, batch_id: int) -> Batch | None:
+        ...
+
+    @abstractmethod
+    def list_by_user(self, user_id: int) -> list[Batch]:
+        """Do mais recente para o mais antigo."""
+
+    @abstractmethod
+    def update(self, batch: Batch) -> None:
+        ...
+
+
+class BatchItemRepository(ABC):
+    @abstractmethod
+    def get(self, batch_id: int, position: int) -> BatchItem | None:
+        ...
+
+    @abstractmethod
+    def list_by_batch(self, batch_id: int) -> list[BatchItem]:
+        ...
+
+    @abstractmethod
+    def save_all(self, items: list[BatchItem]) -> None:
+        ...
+
+    @abstractmethod
+    def progress(self, batch_id: int) -> BatchProgress:
         ...
 
 
