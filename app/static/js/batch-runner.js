@@ -2,7 +2,7 @@
 
 import { api } from "./api.js";
 import {
-  copyFile, entryNames, removeFile, removeIfEmpty, StepError,
+  copyFile, describeError, entryNames, removeFile, removeIfEmpty, StepError,
 } from "./fs.js";
 import {
   clearReservation, forgetFolders, loadReservation, saveFolders,
@@ -97,7 +97,7 @@ async function runLocked(batch, prepare, folders, onProgress) {
         return await processAll(await prepare(), folders, onProgress);
       } catch (error) {
         throw new Error(
-          `${error.message} A operação parou; retome pelo histórico.`
+          `${describeError(error)} A operação parou; retome pelo histórico.`
         );
       }
     }

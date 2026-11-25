@@ -95,6 +95,19 @@ def test_settle_explains_the_failure_in_plain_language():
     assert settled.error == "Sem permissão para gravar na pasta de destino."
 
 
+@pytest.mark.parametrize("step, code, expected", [
+    ("write", "NoModificationAllowedError",
+     "Sem permissão para gravar na pasta de destino."),
+    ("read", "NotReadableError",
+     "O arquivo está em uso ou mudou durante a leitura."),
+    ("remove", "InvalidStateError",
+     "O arquivo foi copiado, mas continua na origem. "
+     "O arquivo está em uso por outro programa."),
+])
+def test_settle_explains_codes_seen_on_windows(step, code, expected):
+    assert make_batch().settle(make_item(), step, code).error == expected
+
+
 def test_settle_unknown_failure_has_a_default_message():
     settled = make_batch().settle(make_item(), "read", "Estranho")
     assert settled.error == "Não foi possível processar o arquivo."

@@ -6,6 +6,7 @@ import {
 } from "./batch-runner.js";
 import { confirmDialog } from "./dialog.js";
 import { hideErrors, showErrors } from "./error-panel.js";
+import { describeError } from "./fs.js";
 import { progressBar } from "./progress.js";
 import { foldersToResume } from "./resume.js";
 import {
@@ -144,7 +145,7 @@ export async function refreshHistory() {
       : [h("li", { class: "empty" }, "Nenhuma operação por enquanto.")]));
     renderBanner(batches.filter((b) => b.status === "open" && !isRunning(b)));
   } catch (error) {
-    setStatus(el.status, error.message, true);
+    setStatus(el.status, describeError(error), true);
   }
 }
 
@@ -158,7 +159,7 @@ async function guarded(action) {
   try {
     await action();
   } catch (error) {
-    setStatus(el.status, error.message, true);
+    setStatus(el.status, describeError(error), true);
   }
 }
 

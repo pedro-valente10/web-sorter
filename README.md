@@ -67,7 +67,7 @@ ainda não oferecem. O banco SQLite e a chave de sessão ficam em `instance/`
 ## Testes e qualidade
 
 ```powershell
-pytest                                   # 187 testes
+pytest                                   # 190 testes
 pytest --cov=domain --cov=use_cases --cov=infra --cov=app
 flake8 app domain use_cases infra tests  # PEP-8
 ```
@@ -154,6 +154,6 @@ Usamos o Claude (Anthropic) como apoio, com uma estratégia em etapas:
    infraestrutura, e o código passa no `flake8`. A IA também testou as telas
    no navegador com pastas de teste. Nessa etapa ela encontrou e corrigiu uma
    falha própria: um lote interrompido deixava um arquivo vazio no destino.
-5. **Limites.** O JavaScript não tem testes automatizados. A conferência usou
-   pastas virtuais do navegador; falta testar em pastas reais no Chrome ou
-   no Edge.
+5. **Limites.** O JavaScript não tem testes automatizados. A IA conferiu as
+   telas no Edge com pastas reais, incluindo falhas e interrupções; a janela
+   de escolher pasta e o pedido de permissão precisam ser conferidos à mão.

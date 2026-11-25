@@ -1,7 +1,7 @@
 // Recupera as pastas de um lote interrompido, para retomá-lo.
 
 import { confirmDialog } from "./dialog.js";
-import { ensurePermission, pickFolder } from "./fs.js";
+import { describeError, ensurePermission, pickFolder } from "./fs.js";
 import { loadFolders } from "./handle-store.js";
 import { button, folderName, h } from "./ui.js";
 
@@ -33,7 +33,7 @@ function folderSlot(path, role, mode, onPick) {
       status.className = "ok";
       onPick(handle);
     } catch (error) {
-      status.textContent = error.message;
+      status.textContent = describeError(error);
       status.className = "error";
     }
   });

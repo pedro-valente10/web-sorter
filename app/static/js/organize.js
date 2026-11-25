@@ -5,8 +5,8 @@ import { isBusy, planBatch, startBatch } from "./batch-runner.js";
 import { confirmBatch } from "./dialog.js";
 import { hideErrors, showErrors } from "./error-panel.js";
 import {
-  droppedFolder, ensurePermission, isSupported, listEntries, pickFolder,
-  UNSUPPORTED,
+  describeError, droppedFolder, ensurePermission, isSupported, listEntries,
+  pickFolder, UNSUPPORTED,
 } from "./fs.js";
 import { progressBar } from "./progress.js";
 import {
@@ -250,7 +250,7 @@ function act(action) {
     try {
       await action(event);
     } catch (error) {
-      warn(error.message);
+      warn(describeError(error));
     }
     render();
   };
@@ -290,7 +290,7 @@ async function run() {
     setStatus(el.status, batchResult(batch));
     showErrors(el.errors, batch);
   } catch (error) {
-    setStatus(el.status, error.message, true);
+    setStatus(el.status, describeError(error), true);
   } finally {
     bar.remove();
   }

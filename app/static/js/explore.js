@@ -4,8 +4,8 @@ import { isBusy, planBatch, startBatch } from "./batch-runner.js";
 import { confirmBatch } from "./dialog.js";
 import { failedItems, hideErrors, showErrors } from "./error-panel.js";
 import {
-  ensurePermission, entryNames, isSupported, listEntries, pickFolder,
-  UNSUPPORTED,
+  describeError, ensurePermission, entryNames, isSupported, listEntries,
+  pickFolder, UNSUPPORTED,
 } from "./fs.js";
 import {
   buildPreview, LazyLoader, placeholder, releaseUrls,
@@ -205,7 +205,7 @@ function act(action) {
     try {
       await action();
     } catch (error) {
-      setStatus(el.status, error.message, true);
+      setStatus(el.status, describeError(error), true);
     }
     render();
   };
@@ -271,7 +271,7 @@ async function runBatch(kind, destination, path) {
     state.selected = new Set(failed);
     state.failed = new Map(failed.map((n) => [n, VERBS[kind].notDone]));
   } catch (error) {
-    setStatus(el.status, error.message, true);
+    setStatus(el.status, describeError(error), true);
   } finally {
     bar.remove();
   }

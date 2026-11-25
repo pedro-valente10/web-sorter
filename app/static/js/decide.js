@@ -3,8 +3,8 @@
 import { api } from "./api.js";
 import { confirmDialog } from "./dialog.js";
 import {
-  copyFile, entryNames, isSupported, listEntries, pickFolder, removeFile,
-  UNSUPPORTED,
+  copyFile, describeError, entryNames, isSupported, listEntries, pickFolder,
+  removeFile, UNSUPPORTED,
 } from "./fs.js";
 import {
   buildPreview, LazyLoader, placeholder, releaseUrls,
@@ -281,7 +281,7 @@ async function guarded(action) {
   try {
     await action();
   } catch (error) {
-    setStatus(el.status, error.message, true);
+    setStatus(el.status, describeError(error), true);
     renderAll();
   }
 }

@@ -28,6 +28,19 @@ export async function droppedFolder(event) {
   return handle;
 }
 
+const MESSAGES = {
+  NotFoundError: "A pasta não foi encontrada. Ela pode ter sido movida, " +
+    "renomeada ou apagada.",
+  NotAllowedError: "O acesso à pasta não foi autorizado.",
+  SecurityError: "O navegador bloqueou o acesso a esta pasta.",
+};
+
+// Os erros do navegador vêm em inglês; os da aplicação já são claros.
+export function describeError(error) {
+  if (!(error instanceof DOMException)) return error.message;
+  return MESSAGES[error.name] || "Não foi possível acessar a pasta.";
+}
+
 // Precisa ser chamada a partir de um clique do usuário.
 export async function ensurePermission(handle, mode) {
   if (!handle.queryPermission) return;
@@ -110,6 +123,10 @@ export async function copyFile(source, name, target, targetName, onReserve) {
       try {
         await file.stream().pipeTo(writable);
       } catch (error) {
+        // Arquivo bloqueado por outro programa: o fluxo falha com TypeError.
+        if (error instanceof TypeError) {
+          throw new StepError("read", "NotReadableError");
+        }
         const reading = ["NotReadableError", "NotFoundError"];
         const failed = reading.includes(error.name) ? "read" : "write";
         throw new StepError(failed, error.name);

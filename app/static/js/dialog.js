@@ -1,5 +1,6 @@
 // Diálogo de confirmação (SCRUM-41).
 
+import { describeError } from "./fs.js";
 import { button, h, icon, folderName, folderTrail, joinNames } from "./ui.js";
 import { fileCount, number, VERBS } from "./ui.js";
 
@@ -27,7 +28,7 @@ export function confirmDialog({ title, body, confirmLabel, danger, onConfirm }) 
         if (onConfirm) await onConfirm();
         dialog.close("confirm");
       } catch (failure) {
-        error.textContent = failure.message;
+        error.textContent = describeError(failure);
         error.hidden = false;
       } finally {
         confirm.disabled = false;
