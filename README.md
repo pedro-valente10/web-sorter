@@ -134,9 +134,6 @@ tradução dos erros, retomada) ficam em `domain/` e `use_cases/`. O JavaScript
 
 ## Uso de IA (bônus)
 
-> **Rascunho: o grupo deve revisar este texto e ajustá-lo ao que realmente
-> fez antes da entrega.**
-
 Usamos o Claude (Anthropic) como apoio, com uma estratégia em etapas:
 
 1. **Entrevista antes do código.** Com a skill *grill me* (pocock-skills), a
